@@ -12,7 +12,9 @@ from themes import Theme
 from settings import base_dir
 from opennoteswidget import OpenNotesPanel
 
-class MainWindow(QMainWindow):    
+class MainWindow(QMainWindow):
+    search_text_entered = pyqtSignal(str)
+
     def __init__(self, theme, close_handler):
         super(MainWindow, self).__init__()
 
@@ -41,8 +43,10 @@ class MainWindow(QMainWindow):
         subsplit = QSplitter()
         self.notelist_panel = OpenNotesPanel()
         self.notelist_panel.setVisible(False)
+        self.search_input_field = self.make_search_input_field()
         self.search_results_editor = self.make_search_results_editor()
         self.saved_searches_editor = self.make_saved_searches_editor()
+        subsplit.addWidget(self.search_input_field)
         subsplit.addWidget(self.search_results_editor)
         subsplit.addWidget(self.saved_searches_editor)
         subsplit.setOrientation(Qt.Vertical)
@@ -228,6 +232,13 @@ class MainWindow(QMainWindow):
         self.tab_spaces_label.setText(f'{usetabs:20} {wrapmode:20} {autoindent:20} {guides:20}')
         return
 
+    def make_search_input_field(self):
+        search_field = QLineEdit()
+        search_field.setFixedHeight(25)
+        search_field.textChanged.connect(self.search_text_handler)
+        return search_field
+
+
     def make_search_results_editor(self):
         editor = ZettelkastenScintilla(editor_type='searchresults')
         editor.setUtf8(True)             # Set encoding to UTF-8
@@ -309,7 +320,9 @@ class MainWindow(QMainWindow):
 
         # no minimum width
         return editor
-        
+
+    def search_text_handler(self, text):
+        self.search_text_entered.emit(text)
 
     def closeEvent(self, event):
         if self.close_handler() == False:
