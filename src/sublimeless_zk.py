@@ -367,7 +367,7 @@ class Sublimeless_Zk(QObject):
         # normal actions
         self.autosave_timer.timeout.connect(self.on_timer)
         self.findReplaceAction.triggered.connect(self.find_and_replace)
-        self.findInFilesAction.triggered.connect(self.find_in_files)
+        self.findInFilesAction.triggered.connect(self.focus_search_bar)
         self.aboutAction.triggered.connect(self.about)
         self.newAction.triggered.connect(self.zk_new_zettel)
         self.openFolderAction.triggered.connect(self.open_folder)
@@ -1540,6 +1540,9 @@ class Sublimeless_Zk(QObject):
     def about(self):
         about = AboutDlg(self.gui)
         about.exec_()
+
+    def focus_search_bar(self):
+        self.gui.search_input_field.setFocus();
 
     def find_in_files(self, search_terms=None):
         sort, order = self.retrieve_sort_and_order()
