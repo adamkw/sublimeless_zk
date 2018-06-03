@@ -361,10 +361,13 @@ class Sublimeless_Zk(QObject):
         # tab actions
         self.gui.qtabs.tabCloseRequested.connect(self.tab_close_requested)
 
+        # search input actions
+        self.gui.search_text_entered.connect(self.search_text_entered)
+
         # normal actions
         self.autosave_timer.timeout.connect(self.on_timer)
         self.findReplaceAction.triggered.connect(self.find_and_replace)
-        self.findInFilesAction.triggered.connect(self.find_in_files)
+        self.findInFilesAction.triggered.connect(self.focus_search_bar)
         self.aboutAction.triggered.connect(self.about)
         self.newAction.triggered.connect(self.zk_new_zettel)
         self.openFolderAction.triggered.connect(self.open_folder)
@@ -672,6 +675,12 @@ class Sublimeless_Zk(QObject):
     def search_spec_clicked(self, search_spec, ctrl, alt, shift):
         print('search spec', search_spec)
         self.advanced_tag_search(search_spec)
+
+    def search_text_entered(self, text):
+        if not text:
+            self.show_all_notes(check_editor=False)
+        else:
+            self.find_in_files(text)
 
     def create_link_from_title_clicked(self, title, ctrl, alt, shift, pos, length):
         """
@@ -1531,6 +1540,9 @@ class Sublimeless_Zk(QObject):
     def about(self):
         about = AboutDlg(self.gui)
         about.exec_()
+
+    def focus_search_bar(self):
+        self.gui.search_input_field.setFocus();
 
     def find_in_files(self, search_terms=None):
         sort, order = self.retrieve_sort_and_order()
