@@ -1053,7 +1053,8 @@ class Sublimeless_Zk(QObject):
         selected_note, _ = show_fuzzy_panel(self.gui.qtabs, 'Insert Link to Note', note_list_dict)
 
         if selected_note:
-            note_id, title = selected_note.split(' ', 1)
+            note_id = Project.cut_after_note_id(selected_note)
+            title = selected_note.replace(note_id, '').lstrip()
             link_txt = self.project.style_link(note_id, title)
             # check if editor contains [[ right before current cursor position
             line, index = editor.getCursorPosition()
